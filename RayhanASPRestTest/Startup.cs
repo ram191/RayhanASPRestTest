@@ -33,6 +33,8 @@ namespace RayhanASPRestTest
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UsePathBase("/api/v1");
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

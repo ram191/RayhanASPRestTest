@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace RayhanASPRestTest.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("[controller]")]
     public class OrderItemController : ControllerBase
     {
         private readonly OnlineOrderContext _context;
