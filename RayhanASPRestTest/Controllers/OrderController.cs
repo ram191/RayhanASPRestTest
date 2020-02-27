@@ -38,13 +38,13 @@ namespace RayhanASPRestTest.Controllers
         public IActionResult Get(int id)
         {
             var data = _context.Orders.Find(id);
-            var alldata = new { data.Id, data.User_id, data.Driver_id, status = Enum.GetName(typeof(Order_status), data.Status) };
 
             if (data == null)
             {
                 return NotFound(new { Message = "Order not found", Status = false });
             }
 
+            var alldata = new { data.Id, data.User_id, data.Driver_id, status = Enum.GetName(typeof(Order_status), data.Status) };
             return Ok(new { Message = "Success retreiving data", Status = true, Data = alldata });
         }
 
