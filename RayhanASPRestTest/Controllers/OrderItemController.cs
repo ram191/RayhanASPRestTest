@@ -11,11 +11,11 @@ namespace RayhanASPRestTest.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class DriverController : ControllerBase
+    public class OrderItemController : ControllerBase
     {
         private readonly OnlineOrderContext _context;
 
-        public DriverController(OnlineOrderContext context)
+        public OrderItemController(OnlineOrderContext context)
         {
             _context = context;
         }
@@ -23,17 +23,17 @@ namespace RayhanASPRestTest.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok( new { Message = "Success retreiving data", Status = true, Data = _context.Drivers });
+            return Ok( new { Message = "Success retreiving data", Status = true, Data = _context.Order_items });
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var data = _context.Drivers.Find(id);
+            var data = _context.Order_items.Find(id);
 
             if (data == null)
             {
-                return NotFound(new { Message = "Driver not found", Status = false });
+                return NotFound(new { Message = "Order item not found", Status = false });
             }
 
             return Ok(new { Message = "Success retreiving data", Status = true, Data = data });
@@ -42,34 +42,25 @@ namespace RayhanASPRestTest.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var data = await _context.Drivers.FindAsync(id);
+            var data = await _context.Order_items.FindAsync(id);
 
             if (data == null)
             {
-                return NotFound(new { Message = "Driver not found", Status = false });
+                return NotFound(new { Message = "Order item not found", Status = false });
             }
 
-            _context.Drivers.Remove(data);
+            _context.Order_items.Remove(data);
             await _context.SaveChangesAsync();
 
             return StatusCode(204);
         }
 
         [HttpPost]
-        public IActionResult Post(Driver data)
+        public IActionResult Post(OrderItem data)
         {
-            _context.Drivers.Add(data);
+            _context.Order_items.Add(data);
             _context.SaveChanges();
-            return CreatedAtAction("created", new { Status = "Database has been updated", Data = ""});
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, Driver data)
-        {
-            var query = _context.Drivers.First(x => x.Id == id);
-            query.Full_name = data.Full_name;
-            _context.SaveChanges();
-            return NoContent();
+            return Ok();
         }
     }
 }

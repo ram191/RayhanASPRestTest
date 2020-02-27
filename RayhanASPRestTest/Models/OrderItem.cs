@@ -11,5 +11,10 @@ namespace RayhanASPRestTest.Models
 
         public int Product_id { get; set; }
         public Product Product { get; set; }
+
+        public OrderItem()
+        {
+            Quantity = 1;
+        }
     }
 }

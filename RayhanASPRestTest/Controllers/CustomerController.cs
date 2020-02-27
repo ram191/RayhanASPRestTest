@@ -25,21 +25,21 @@ namespace RayhanASPRestTest.Controllers
         {
             List<object> allData = new List<object>();
             var data = _context.Customers;
-            foreach(var x in data)
+            foreach (var x in data)
             {
                 allData.Add(new { x.Id, x.Full_name, x.Username, x.Email, x.Phone_number });
-            } 
-            return Ok( new { Message = "Success retreiving data", Status = true, Data = allData});
+            }
+            return Ok(new { Message = "Success retreiving data", Status = true, Data = allData });
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public IActionResult Get(int id)
         {
-            var data = await _context.Customers.Where(x => x.Id == id).Select(x => x).SingleAsync();
+            var data = _context.Customers.Find(id);
 
             if (data == null)
             {
-                return NotFound();
+                return NotFound(new { Message = "Customer not found", Status = false });
             }
 
             return Ok(new { Message = "Success retreiving data", Status = true, Data = data });
@@ -49,6 +49,12 @@ namespace RayhanASPRestTest.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var data = await _context.Customers.FindAsync(id);
+
+            if (data == null)
+            {
+                return NotFound(new { Message = "Customer not found", Status = false });
+            }
+
             _context.Customers.Remove(data);
             await _context.SaveChangesAsync();
 
@@ -63,10 +69,15 @@ namespace RayhanASPRestTest.Controllers
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public IActionResult Put(int id, Customer data)
         {
-            _context.Entry(data).State = EntityState.Modified;
+            var query = _context.Customers.Find(id);
+            query.Full_name = data.Full_name;
+            query.Username = data.Username;
+            query.Email = data.Email;
+            query.Phone_number = data.Phone_number;
+            query.Updated_at = DateTime.Now;
             _context.SaveChanges();
             return NoContent();
         }

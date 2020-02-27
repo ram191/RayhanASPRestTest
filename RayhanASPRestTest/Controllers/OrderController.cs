@@ -34,13 +34,13 @@ namespace RayhanASPRestTest.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public IActionResult Get(int id)
         {
-            var data = await _context.Orders.Where(x => x.Id == id).Select(x => x).SingleAsync();
+            var data = _context.Orders.Find(id);
 
             if (data == null)
             {
-                return NotFound();
+                return NotFound(new { Message = "Order not found", Status = false });
             }
 
             return Ok(new { Message = "Success retreiving data", Status = true, Data = data });
@@ -50,6 +50,12 @@ namespace RayhanASPRestTest.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var data = await _context.Orders.FindAsync(id);
+
+            if (data == null)
+            {
+                return NotFound(new { Message = "Customer not found", Status = false });
+            }
+
             _context.Orders.Remove(data);
             await _context.SaveChangesAsync();
 
@@ -64,10 +70,11 @@ namespace RayhanASPRestTest.Controllers
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public IActionResult Put(int id, Order data)
         {
-            _context.Entry(data).State = EntityState.Modified;
+            var query = _context.Orders.First(x => x.Id == id);
+            query.Status = data.Status;
             _context.SaveChanges();
             return NoContent();
         }

@@ -27,13 +27,13 @@ namespace RayhanASPRestTest.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public IActionResult Get(int id)
         {
-            var data = await _context.Products.Where(x => x.Id == id).Select(x => x).SingleAsync();
+            var data = _context.Products.Find(id);
 
             if (data == null)
             {
-                return NotFound();
+                return NotFound(new { Message = "Product not found", Status = false });
             }
 
             return Ok(new { Message = "Success retreiving data", Status = true, Data = data });
@@ -43,12 +43,18 @@ namespace RayhanASPRestTest.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var data = await _context.Products.FindAsync(id);
+
+            if (data == null)
+            {
+                return NotFound(new { Message = "Product not found", Status = false });
+            }
+
             _context.Products.Remove(data);
             await _context.SaveChangesAsync();
 
-
             return StatusCode(204);
         }
+
         [HttpPost]
         public IActionResult Post(Product data)
         {
@@ -57,10 +63,13 @@ namespace RayhanASPRestTest.Controllers
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public IActionResult Put(int id, Product data)
         {
-            _context.Entry(data).State = EntityState.Modified;
+            var query = _context.Products.Find(id);
+            query.Name = data.Name;
+            query.Price = data.Price;
+            query.Updated_at = DateTime.Now;
             _context.SaveChanges();
             return NoContent();
         }
