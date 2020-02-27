@@ -25,10 +25,11 @@ namespace RayhanASPRestTest.Controllers
         {
             var alldata = new List<object>();
             var data = _context.Orders;
+            var orderData = _context.Order_items;
 
             foreach(var x in data)
             {
-                alldata.Add(new { x.User_id, x.Driver_id, status = Enum.GetName(typeof(Order_status), x.Status)});
+                alldata.Add(new { x.Id, x.User_id, x.Driver_id, status = Enum.GetName(typeof(Order_status), x.Status)});
             }
             return Ok( new { Message = "Success retreiving data", Status = true, Data = alldata });
         }
@@ -37,13 +38,14 @@ namespace RayhanASPRestTest.Controllers
         public IActionResult Get(int id)
         {
             var data = _context.Orders.Find(id);
+            var alldata = new { data.Id, data.User_id, data.Driver_id, status = Enum.GetName(typeof(Order_status), data.Status) };
 
             if (data == null)
             {
                 return NotFound(new { Message = "Order not found", Status = false });
             }
 
-            return Ok(new { Message = "Success retreiving data", Status = true, Data = data });
+            return Ok(new { Message = "Success retreiving data", Status = true, Data = alldata });
         }
 
         [HttpDelete("{id}")]
